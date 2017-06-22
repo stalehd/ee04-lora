@@ -1,0 +1,4 @@
+### Target: targets/ee04-lora
+target.app: "apps/ee04lora"
+target.bsp: "@apache-mynewt-core/hw/bsp/telee02"
+target.build_profile: "debug"
