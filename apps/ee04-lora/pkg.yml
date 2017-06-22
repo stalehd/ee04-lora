@@ -28,6 +28,6 @@ pkg.deps:
     - "@apache-mynewt-core/kernel/os"
     - "@apache-mynewt-core/hw/hal"
     - "@apache-mynewt-core/sys/console/full"
-    - "@apache-mynewt-core/sys/stats/stub"
+    - "@apache-mynewt-core/sys/stats/full"
     - "@apache-mynewt-core/hw/drivers/lora/sx1276"
     - "@apache-mynewt-core/net/lora/node"

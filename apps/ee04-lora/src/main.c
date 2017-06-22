@@ -25,7 +25,6 @@
 #include "bsp/bsp.h"
 #include "hal/hal_gpio.h"
 #include "hal/hal_spi.h"
-#include "mcu/nrf52_hal.h"
 #include "console/console.h"
 #ifdef ARCH_sim
 #include "mcu/mcu_sim.h"

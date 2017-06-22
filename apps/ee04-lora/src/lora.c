@@ -20,11 +20,11 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include "provisioning.h"
 #include "console/console.h"
 #include "os/os.h"
-
+#include "hal/hal_watchdog.h"
 /*!
  * Defines the application data transmission duty cycle. 5s, value in [s].
  */
-#define APP_TX_DUTYCYCLE                            10000
+#define APP_TX_DUTYCYCLE                            10
 
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,
@@ -124,11 +124,6 @@ static uint8_t AppData[LORAWAN_APP_DATA_MAX_SIZE];
  * Indicates if the node is sending confirmed or unconfirmed messages
  */
 static uint8_t IsTxConfirmed = LORAWAN_CONFIRMED_MSG_ON;
-
-/*!
- * Defines the application data transmission duty cycle
- */
-static uint32_t TxDutyCycleTime;
 
 
 /*!
@@ -380,10 +375,13 @@ void lora_event_loop() {
 
             NextTx = SendFrame( );
         }
-            // Schedule next packet transmission
-        TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
-        
-        os_cputime_delay_usecs(TxDutyCycleTime * 1000L);
+
+        for (int i = 0; i < APP_TX_DUTYCYCLE; i++) {
+            console_printf(".");
+            os_cputime_delay_usecs(1000000L);
+            hal_watchdog_tickle();
+        }
+        console_printf("!\n");
     }
 }
 
