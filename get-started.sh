@@ -39,7 +39,9 @@ newt target delete my_blinky_sim
 #
 newt build ee04_boot
 newt build ee04-lora
-
+newt load ee04_boot
+newt create-image ee04-lora 0.0.0.1
+newt load ee04-lora
 # Do
 #
 #   newt target show

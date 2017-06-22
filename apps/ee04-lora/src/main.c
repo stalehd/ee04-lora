@@ -24,15 +24,14 @@
 #include "os/os.h"
 #include "bsp/bsp.h"
 #include "hal/hal_gpio.h"
+#include "hal/hal_spi.h"
+#include "mcu/nrf52_hal.h"
 #include "console/console.h"
 #ifdef ARCH_sim
 #include "mcu/mcu_sim.h"
 #endif
 
-static volatile int g_task1_loops;
-
-/* For LED toggling */
-int g_led_pin;
+#include "lora.h"
 
 /**
  * main
@@ -52,17 +51,32 @@ main(int argc, char **argv)
 #endif
 
     sysinit();
+    console_printf("********** Booty time!\n");
+    int error;
 
-    console_printf("This is the blinky example\n");
+#if 0
+    struct nrf52_hal_spi_cfg spi_cfg = {
+        .sck_pin      = 25,
+        .mosi_pin     = 23,
+        .miso_pin     = 24,
+    };
 
-    while (1) {
-        ++g_task1_loops;
+    console_printf("Enable HAL SPI: Start\n");
+    error = hal_spi_init(0, &spi_cfg, HAL_SPI_TYPE_MASTER);
+    assert(error == 0);
+    error = hal_spi_enable(0);
+    assert(error == 0);
+    console_printf("Enable HAL SPI: Success\n");
+#endif
+    console_printf("Enable antenna switch GPIO\n");
+    error = hal_gpio_init_out(27, 1);
+    assert(error == 0);
+    hal_gpio_write(27, 1);
+    console_printf("GPIO ok\n");
 
-        /* Wait one second */
-        os_time_delay(OS_TICKS_PER_SEC);
+    lora_event_loop();
 
-        console_printf("Blinking for the %d time\n", g_task1_loops);
-    }
+    console_printf("I assumed I wouldn't exit here\n");
     assert(0);
 
     return rc;
