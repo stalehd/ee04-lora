@@ -17,7 +17,7 @@
 #define LORA_CONFIG_H
 
 
-
+#if 0
 #define LORAWAN_OTAA 0
 
 /* ==========================================================================
@@ -39,11 +39,12 @@
 #define LORAWAN_DEVICE_ADDRESS (uint32_t) 0x0eefbabe
 #define LORAWAN_NWKSKEY { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
 #define LORAWAN_APPSKEY { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
-
+#endif
 	
 	
-    #if 0
+#if 1
 
+#define LORAWAN_OTAA 1
 
 /* ==========================================================================
  * OTAA provisioning. This includes the device EUI, application EUI and

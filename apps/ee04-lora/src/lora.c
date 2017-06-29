@@ -24,7 +24,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 /*!
  * Defines the application data transmission duty cycle. 5s, value in [s].
  */
-#define APP_TX_DUTYCYCLE                            10
+#define APP_TX_DUTYCYCLE                            20
 
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,
@@ -359,7 +359,6 @@ void lora_event_loop() {
         {
             if( mibReq.Param.IsNetworkJoined == true )
             {
-                console_printf("State: SEND\n");
                 DeviceState = DEVICE_STATE_SEND;
                 NextTx = true;
             }
@@ -371,17 +370,16 @@ void lora_event_loop() {
         }
         if( NextTx == true )
         {
+            console_printf("State: SEND\n");
             PrepareTxFrame( );
 
             NextTx = SendFrame( );
         }
 
         for (int i = 0; i < APP_TX_DUTYCYCLE; i++) {
-            console_printf(".");
             os_cputime_delay_usecs(1000000L);
             hal_watchdog_tickle();
         }
-        console_printf("!\n");
     }
 }
 

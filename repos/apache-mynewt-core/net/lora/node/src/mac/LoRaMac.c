@@ -30,7 +30,6 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jä
 
 #include "os/os.h"
 #include "hal/hal_timer.h"
-
 #include "console/console.h"
 
 #if MYNEWT_VAL(OS_CPUTIME_FREQ) != 1000000
@@ -964,6 +963,8 @@ static void ResetMacParameters(void);
 
 static void OnRadioTxDone(void)
 {
+    console_printf("TX Done\n");
+
     uint32_t curTime = os_cputime_get32();
 
     if (LoRaMacDeviceClass != CLASS_C) {
@@ -1031,6 +1032,7 @@ static void PrepareRxDoneAbort( void )
 
 static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
+    console_printf("RX Done\n");
     LoRaMacHeader_t macHdr;
     LoRaMacFrameCtrl_t fCtrl;
     bool skipIndication = false;
@@ -1425,6 +1427,8 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
 
 static void OnRadioTxTimeout( void )
 {
+    console_printf("RX Done\n");
+
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );
@@ -1441,6 +1445,8 @@ static void OnRadioTxTimeout( void )
 
 static void OnRadioRxError( void )
 {
+    console_printf("RX Error\n");
+
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );
@@ -1463,6 +1469,8 @@ static void OnRadioRxError( void )
 
 static void OnRadioRxTimeout( void )
 {
+    console_printf("RX Timeout\n");
+    
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );
@@ -1739,6 +1747,7 @@ OnRxWindow1TimerEvent(void *unused)
         bandwidth  = 1;
         symbTimeout = 14;
     }
+    symbTimeout *= 10;
     RxWindowSetup( Channels[Channel].Frequency, datarate, bandwidth, symbTimeout, false );
 #elif defined( USE_BAND_470 )
     datarate = LoRaMacParams.ChannelsDatarate - LoRaMacParams.Rx1DrOffset;
@@ -2046,7 +2055,7 @@ static bool RxWindowSetup( uint32_t freq, int8_t datarate, uint32_t bandwidth, u
         }
         else
         {
-            modem = MODEM_LORA;
+            modem = MODEM_LORA;            
             Radio.SetRxConfig( modem, bandwidth, downlinkDatarate, 1, 0, 8, timeout, false, 0, false, 0, 0, true, rxContinuous );
         }
 #elif defined( USE_BAND_470 ) || defined( USE_BAND_915 ) || defined( USE_BAND_915_HYBRID )
@@ -3466,18 +3475,13 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
     RadioEvents.RxError = OnRadioRxError;
     RadioEvents.TxTimeout = OnRadioTxTimeout;
     RadioEvents.RxTimeout = OnRadioRxTimeout;
-
-    console_printf("...radio init\n");
-
     Radio.Init( &RadioEvents );
-
-    console_printf("...done\n");
 
     // Random seed initialization
     //srand1( Radio.Random( ) );
 
     PublicNetwork = true;
-    //Radio.SetPublicNetwork( PublicNetwork );
+    Radio.SetPublicNetwork( PublicNetwork );
     Radio.Sleep( );
 
     return LORAMAC_STATUS_OK;
@@ -3769,7 +3773,7 @@ LoRaMacStatus_t LoRaMacMibSetRequestConfirm( MibRequestConfirm_t *mibSet )
         case MIB_PUBLIC_NETWORK:
         {
             PublicNetwork = mibSet->Param.EnablePublicNetwork;
-            //Radio.SetPublicNetwork( PublicNetwork );
+            Radio.SetPublicNetwork( PublicNetwork );
             break;
         }
         case MIB_REPEATER_SUPPORT:

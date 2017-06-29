@@ -25,7 +25,7 @@ Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
 #include "node/radio.h"
 #include "sx1276.h"
 #include "sx1276-board.h"
-#include "console/console.h"
+
 /*
  * Local types definition
  */
@@ -300,9 +300,8 @@ void SX1276Init( RadioEvents_t *events )
         SX1276Write( RadioRegsInit[i].Addr, RadioRegsInit[i].Value );
     }
 
-    SX1276SetModem( MODEM_LORA );
-    console_printf("Setting PUBLIC syncword\n");
-    SX1276Write(REG_LR_SYNCWORD, 0x34);
+    SX1276SetModem( MODEM_FSK );
+
     SX1276.Settings.State = RF_IDLE;
 }
 
@@ -313,13 +312,11 @@ RadioState_t SX1276GetStatus( void )
 
 void SX1276SetChannel( uint32_t freq )
 {
-    console_printf("RADIO: Set RX @ %d\n", (int) freq);
     SX1276.Settings.Channel = freq;
     freq = ( uint32_t )( ( double )freq / ( double )FREQ_STEP );
     SX1276Write( REG_FRFMSB, ( uint8_t )( ( freq >> 16 ) & 0xFF ) );
     SX1276Write( REG_FRFMID, ( uint8_t )( ( freq >> 8 ) & 0xFF ) );
     SX1276Write( REG_FRFLSB, ( uint8_t )( freq & 0xFF ) );
-
 }
 
 bool SX1276IsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh )
@@ -607,7 +604,6 @@ void SX1276SetRxConfig( RadioModems_t modem, uint32_t bandwidth,
         }
         break;
     }
-
 }
 
 void SX1276SetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
@@ -946,7 +942,6 @@ void SX1276Send( uint8_t *buffer, uint8_t size )
             // Write payload buffer
             SX1276WriteFifo( buffer, size );
             txTimeout = SX1276.Settings.LoRa.TxTimeout;
-
         }
         break;
     }
@@ -1203,7 +1198,6 @@ void SX1276SetTx( uint32_t timeout )
     SX1276.Settings.State = RF_TX_RUNNING;
     os_cputime_timer_relative(&TxTimeoutTimer, timeout*1000);
     SX1276SetOpMode( RF_OPMODE_TRANSMITTER );
-
 }
 
 void SX1276StartCad( void )
@@ -1314,7 +1308,6 @@ void SX1276SetModem( RadioModems_t modem )
     {
     default:
     case MODEM_FSK:
-        console_printf("Setting FSK modem\n");
         SX1276SetOpMode( RF_OPMODE_SLEEP );
         SX1276Write( REG_OPMODE, ( SX1276Read( REG_OPMODE ) & RFLR_OPMODE_LONGRANGEMODE_MASK ) | RFLR_OPMODE_LONGRANGEMODE_OFF );
 
@@ -1322,7 +1315,6 @@ void SX1276SetModem( RadioModems_t modem )
         SX1276Write( REG_DIOMAPPING2, 0x30 ); // DIO5=ModeReady
         break;
     case MODEM_LORA:
-        console_printf("Setting LORA modem\n");
         SX1276SetOpMode( RF_OPMODE_SLEEP );
         SX1276Write( REG_OPMODE, ( SX1276Read( REG_OPMODE ) & RFLR_OPMODE_LONGRANGEMODE_MASK ) | RFLR_OPMODE_LONGRANGEMODE_ON );
 
@@ -1399,6 +1391,22 @@ void SX1276SetMaxPayloadLength( RadioModems_t modem, uint8_t max )
     case MODEM_LORA:
         SX1276Write( REG_LR_PAYLOADMAXLENGTH, max );
         break;
+    }
+}
+
+void SX1276SetPublicNetwork( bool enable )
+{
+    SX1276SetModem( MODEM_LORA );
+    SX1276.Settings.LoRa.PublicNetwork = enable;
+    if( enable == true )
+    {
+        // Change LoRa modem SyncWord
+        SX1276Write( REG_LR_SYNCWORD, LORA_MAC_PUBLIC_SYNCWORD );
+    }
+    else
+    {
+        // Change LoRa modem SyncWord
+        SX1276Write( REG_LR_SYNCWORD, LORA_MAC_PRIVATE_SYNCWORD );
     }
 }
 
