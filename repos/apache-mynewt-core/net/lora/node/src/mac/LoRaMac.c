@@ -963,8 +963,6 @@ static void ResetMacParameters(void);
 
 static void OnRadioTxDone(void)
 {
-    console_printf("TX Done\n");
-
     uint32_t curTime = os_cputime_get32();
 
     if (LoRaMacDeviceClass != CLASS_C) {
@@ -1747,7 +1745,7 @@ OnRxWindow1TimerEvent(void *unused)
         bandwidth  = 1;
         symbTimeout = 14;
     }
-    symbTimeout *= 10;
+    symbTimeout *= 4;
     RxWindowSetup( Channels[Channel].Frequency, datarate, bandwidth, symbTimeout, false );
 #elif defined( USE_BAND_470 )
     datarate = LoRaMacParams.ChannelsDatarate - LoRaMacParams.Rx1DrOffset;
@@ -3153,7 +3151,6 @@ LoRaMacStatus_t PrepareFrame( LoRaMacHeader_t *macHdr, LoRaMacFrameCtrl_t *fCtrl
 
             RxWindow1Delay = LoRaMacParams.ReceiveDelay1 - RADIO_WAKEUP_TIME;
             RxWindow2Delay = LoRaMacParams.ReceiveDelay2 - RADIO_WAKEUP_TIME;
-
             if( SrvAckRequested == true )
             {
                 SrvAckRequested = false;
@@ -4429,3 +4426,4 @@ void LoRaMacTestSetChannel( uint8_t channel )
 {
     Channel = channel;
 }
+
