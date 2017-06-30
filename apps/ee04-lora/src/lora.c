@@ -35,12 +35,12 @@ Maintainer: Miguel Luis and Gregory Cristian
 /*!
  * Default datarate
  */
-#define LORAWAN_DEFAULT_DATARATE                    DR_5
+#define LORAWAN_DEFAULT_DATARATE                    DR_0
 
 /*!
  * LoRaWAN confirmed messages
  */
-#define LORAWAN_CONFIRMED_MSG_ON                    false
+#define LORAWAN_CONFIRMED_MSG_ON                    true
 
 /*!
  * LoRaWAN Adaptive Data Rate
@@ -232,7 +232,7 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
  */
 static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
-    console_printf("McpsIndication\n");
+    console_printf("McpsIndication: Ack: %d\n", (int) mcpsIndication->AckReceived);
 }
 
 /*!
