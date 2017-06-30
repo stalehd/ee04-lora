@@ -1737,7 +1737,7 @@ OnRxWindow1TimerEvent(void *unused)
         bandwidth  = 1;
         symbTimeout = 14;
     }
-    symbTimeout *= 4;
+    symbTimeout *= 10;
     RxWindowSetup( Channels[Channel].Frequency, datarate, bandwidth, symbTimeout, false );
 #elif defined( USE_BAND_470 )
     datarate = LoRaMacParams.ChannelsDatarate - LoRaMacParams.Rx1DrOffset;
