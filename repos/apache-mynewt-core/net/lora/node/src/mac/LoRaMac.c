@@ -1460,7 +1460,7 @@ static void OnRadioRxError( void )
 }
 
 static void OnRadioRxTimeout( void )
-{  
+{
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );
@@ -2045,7 +2045,7 @@ static bool RxWindowSetup( uint32_t freq, int8_t datarate, uint32_t bandwidth, u
         }
         else
         {
-            modem = MODEM_LORA;            
+            modem = MODEM_LORA;
             Radio.SetRxConfig( modem, bandwidth, downlinkDatarate, 1, 0, 8, timeout, false, 0, false, 0, 0, true, rxContinuous );
         }
 #elif defined( USE_BAND_470 ) || defined( USE_BAND_915 ) || defined( USE_BAND_915_HYBRID )
