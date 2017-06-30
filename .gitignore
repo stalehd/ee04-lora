@@ -30,3 +30,5 @@ tags
 *.swp
 *.swo
 *.state
+project.state
+repos

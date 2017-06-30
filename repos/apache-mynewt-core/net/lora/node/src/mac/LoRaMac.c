@@ -30,7 +30,6 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jä
 
 #include "os/os.h"
 #include "hal/hal_timer.h"
-#include "console/console.h"
 
 #if MYNEWT_VAL(OS_CPUTIME_FREQ) != 1000000
 #error "Current code only allows a 1MHz cputime frequency"
@@ -1030,7 +1029,6 @@ static void PrepareRxDoneAbort( void )
 
 static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-    console_printf("RX Done\n");
     LoRaMacHeader_t macHdr;
     LoRaMacFrameCtrl_t fCtrl;
     bool skipIndication = false;
@@ -1425,8 +1423,6 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
 
 static void OnRadioTxTimeout( void )
 {
-    console_printf("RX Done\n");
-
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );
@@ -1443,8 +1439,6 @@ static void OnRadioTxTimeout( void )
 
 static void OnRadioRxError( void )
 {
-    console_printf("RX Error\n");
-
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );
@@ -1466,9 +1460,7 @@ static void OnRadioRxError( void )
 }
 
 static void OnRadioRxTimeout( void )
-{
-    console_printf("RX Timeout\n");
-    
+{  
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );
